@@ -1,0 +1,51 @@
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  server_name {{ server_name }};
+
+  auth_basic            "Restricted Area";
+  auth_basic_user_file  conf/.htpasswd;
+
+  root {{ document_root }};
+
+  index index.php index.html index.htm index.nginx-debian.html;
+
+  client_max_body_size 12M;
+
+  location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+  }
+
+  # block content
+  location ~ ^/content/(.*).(txt|md|mdown)$ {
+    rewrite ^/content/(.*).(txt|md|mdown)$ /error redirect;
+  }
+
+  # block all files in the site folder from being accessed directly
+  location ~ ^/site/(.*)$ {
+    rewrite ^/site/(.*)$ /error redirect;
+  }
+
+  # block all files in the kirby folder
+  location ~ ^/kirby/(.*)$ {
+    rewrite ^/kirby/(.*)$ /error redirect;
+  }
+
+  # site links
+  location / {
+    try_files $uri $uri/ /index.php?$uri&$args;
+  }
+
+  # panel links
+
+  location /panel {
+    try_files $uri $uri/ /panel/index.php?$uri&$args;
+  }
+
+  # deny access to .htaccess files
+  location ~ /\.ht {
+    deny all;
+  }
+}
