@@ -1,0 +1,8 @@
+---
+- name: Provison Ubuntu Server with Nginx and PHP7
+  hosts: php
+  become: true
+  roles:
+    - { role: server }
+    - { role: nginx, document_root: /path/to/directory, server_name: website.tld }
+    - { role: php }
