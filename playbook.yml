@@ -1,8 +1,0 @@
----
-- name: Provison Ubuntu Server with Nginx and PHP7
-  hosts: php
-  become: true
-  roles:
-    - server
-    - nginx
-    - php
